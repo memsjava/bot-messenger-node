@@ -11,9 +11,9 @@
 'use strict';
 
 // Imports dependencies and set up http server
-const axios = require('axios');
 const request = require('request');
 const express = require('express');
+const axios = require('axios');
 const bodyParser = require('body-parser');
 
 const app = express().use(bodyParser.json()); // creates express http server
