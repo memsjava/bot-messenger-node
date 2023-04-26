@@ -21,14 +21,14 @@ async function sendCompte(sender_psid) {
                 },
                 {
                     'content_type': 'text',
-                    'title': 'Votre transactions',
-                    'payload': 'YOUR_TRANSACTIONS'
+                    'title': 'Details reservations',
+                    'payload': 'DETAILS_RESERVATIONS'
                 },
                 {
                     'content_type': 'text',
-                    'title': 'Votre reservations',
-                    'payload': 'YOUR_BOOKING'
-                }
+                    'title': 'Details transactions',
+                    'payload': 'DETAILS_TRANSACTIONS'
+                },
             ]
         }
     };
@@ -84,6 +84,84 @@ async function handleDefaultAccountMessage(sender_psid, message) {
                                     'content_type': 'text',
                                     'title': 'Cree compte',
                                     'payload': 'CREATE_ACCOUNT'
+                                },
+
+                            ]
+                        }
+                    };
+
+                }
+            }
+            if (message.toUpperCase() === "DETAILS TRANSACTIONS") {
+                if (res.data['message'] === 'details_transactions') {
+                    let res_message = '';
+                    const _ = res.data['data'];
+                    // const filter = ['mobile_money', 'profile_id', 'nom', 'phone_number']
+                    for (const [key, value] of Object.entries(_)) {
+                        // if (value !== null && filter.includes(key)) {
+                        if (value !== null) {
+                            res_message += `👉 ${key}: "${value}".\n`;
+                        }
+                    }
+                    response = { "text": res_message };
+                }
+                else {
+                    second_message = true
+                    request_body = {
+                        'recipient': {
+                            'id': sender_psid
+                        },
+                        'message': {
+                            'text': res.data['message'] + "\n\nQu'est ce vous voulez faire maintenant.",
+                            'quick_replies': [
+                                {
+                                    'content_type': 'text',
+                                    'title': 'Cherche maison',
+                                    'payload': 'FIND_LOCATION_PAYLOAD'
+                                },
+                                {
+                                    'content_type': 'text',
+                                    'title': 'Details reservations',
+                                    'payload': 'DETAILS_RESERVATIONS'
+                                },
+
+                            ]
+                        }
+                    };
+
+                }
+            }
+            if (message.toUpperCase() === "DETAILS RESERVATIONS") {
+                if (res.data['message'] === 'details_reservations') {
+                    let res_message = '';
+                    const _ = res.data['data'];
+                    // const filter = ['mobile_money', 'profile_id', 'nom', 'phone_number']
+                    for (const [key, value] of Object.entries(_)) {
+                        // if (value !== null && filter.includes(key)) {
+                        if (value !== null) {
+                            res_message += `👉 ${key}: "${value}".\n`;
+                        }
+                    }
+                    response = { "text": res_message };
+                }
+                else {
+                    second_message = true
+                    request_body = {
+                        'recipient': {
+                            'id': sender_psid
+                        },
+                        'message': {
+                            'text': res.data['message'] + "\n\nQu'est ce vous voulez faire maintenant.",
+                            'quick_replies': [
+                                {
+                                    'content_type': 'text',
+                                    'title': 'Cherche maison',
+                                    'payload': 'FIND_LOCATION_PAYLOAD'
+                                },
+                                {
+                                    'content_type': 'text',
+                                    'title': 'Details transactions',
+                                    'payload': 'DETAILS_TRANSACTIONS'
                                 },
 
                             ]

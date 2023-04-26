@@ -16,6 +16,7 @@ const bodyParser = require('body-parser');
 
 const {
   sendCompte,
+  resaCompte,
   handleDefaultAccountMessage
 } = require('./compte');
 const { callSendMessage, callSendAPI } = require('./utils');
@@ -110,6 +111,12 @@ async function handleMessage(sender_psid, received_message) {
   }
   else if (hafatra.toUpperCase() === "VOTRE COMPTE") {
     sendCompte(sender_psid);
+  }
+  else if (hafatra.toUpperCase() === "DETAILS RESERVATIONS") {
+    handleDefaultAccountMessage(sender_psid, hafatra)
+  }
+  else if (hafatra.toUpperCase() === "DETAILS TRANSACTIONS") {
+    handleDefaultAccountMessage(sender_psid, hafatra)
   }
   else if (hafatra.toUpperCase() === "DETAILS COMPTE") {
     handleDefaultAccountMessage(sender_psid, hafatra);
