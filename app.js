@@ -16,7 +16,9 @@ const bodyParser = require('body-parser');
 
 const {
   sendCompte,
-  resaCompte,
+  handleNotif,
+  handleUpdate,
+  handleUpdateData,
   handleDefaultAccountMessage
 } = require('./compte');
 const { callSendMessage, callSendAPI } = require('./utils');
@@ -98,6 +100,15 @@ app.post('/webhook', (req, res) => {
   }
 });
 
+// Accepts POST requests at /webhook endpoint
+app.post('/notification', (req, res) => {
+  // Parse the request body from the POST
+  let body = req.body;
+  console.log(body)
+  handleNotif(body)
+  res.status(200).send('EVENT_RECEIVED');
+});
+
 // Handles messages events
 async function handleMessage(sender_psid, received_message) {
 
@@ -111,6 +122,18 @@ async function handleMessage(sender_psid, received_message) {
   }
   else if (hafatra.toUpperCase() === "VOTRE COMPTE") {
     sendCompte(sender_psid);
+  }
+  else if (hafatra.toUpperCase() === "UPDATE COMPTE") {
+    handleUpdate(sender_psid);
+  }
+  else if (hafatra.toUpperCase() === "UPDATE NAME") {
+    handleUpdateData(sender_psid, hafatra);
+  }
+  else if (hafatra.toUpperCase() === "UPDATE EMAIL") {
+    handleUpdateData(sender_psid, hafatra);
+  }
+  else if (hafatra.toUpperCase() === "UPDATE PHONE") {
+    handleUpdateData(sender_psid, hafatra);
   }
   else if (hafatra.toUpperCase() === "DETAILS RESERVATIONS") {
     handleDefaultAccountMessage(sender_psid, hafatra)
@@ -177,17 +200,12 @@ function sendWelcomeMessage(sender_psid) {
       'id': sender_psid
     },
     'message': {
-      'text': "Bienvenue!! \n\nComment pouvons-nous vous aider aujourd'hui ?",
+      'text': "Bot trano-vacance.mg \n\nLet's go",
       'quick_replies': [
         {
           'content_type': 'text',
           'title': 'Cherche maison',
           'payload': 'FIND_LOCATION_PAYLOAD'
-        },
-        {
-          'content_type': 'text',
-          'title': 'Faire reservation',
-          'payload': 'BOOK_NOW_PAYLOAD'
         },
         {
           'content_type': 'text',

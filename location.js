@@ -78,7 +78,7 @@ async function sendDetails(sender_psid, id) {
         const _ = response.data;
         const filter = ['destination', 'name', 'cateogory', 'price', 'is_secured', 'wifi', 'can_cook', 'max_pers', 'air_con', 'nbr_beds', 'parking', 'piscine', 'eau_chaude']
         for (const [key, value] of Object.entries(_)) {
-            if (value !== 'false' && filter.includes(key)) {
+            if (value !== false && filter.includes(key)) {
                 message += `👉 ${key}: "${value}".\n`;
             }
         }
@@ -242,7 +242,8 @@ async function sendConfirmProcess(sender_psid, id) {
 // Handles messaging_postbacks events
 async function handleDefaultMessage(sender_psid, message) {
     let response; //= { "text": `vetivety ah hitanao, vetivety aho tsitanao` };
-
+    let second_message = false;
+    let request_body;
     const data = {
         sender_id: sender_psid,
         message: message,
@@ -329,15 +330,46 @@ async function handleDefaultMessage(sender_psid, message) {
                 }
 
             }
+            if (res.data['message'] === 'end_process') {
+                // Get the URL of the message attachment
+                let data = ""
+                data += "\n\nUne fois le paiement effectué. Vous pouvez vérifier l'état de votre réservation ou bien mettre a jour votre compte."
+                response = { "text": data };
+                second_message = true
+                request_body = {
+                    'recipient': {
+                        'id': sender_psid
+                    },
+                    'message': {
+                        'text': res.data['message'] + "\n\nQu'est ce vous voulez faire maintenant.",
+                        'quick_replies': [
+                            {
+                                'content_type': 'text',
+                                'title': 'Update compte',
+                                'payload': 'UPDATE_COMPTE'
+                            },
+                            {
+                                'content_type': 'text',
+                                'title': 'Details reservations',
+                                'payload': 'DETAILS_RESERVATIONS'
+                            },
+
+                        ]
+                    }
+                };
+
+            }
             console.log(response);
         } catch (error) {
             response = {
-                "text": `You sent the message: "${message}". Send again, we got some trouble!`
+                "text": `You sent the message: "${message}". Send again later or call assistance 00261342177510, we got some trouble!`
             }
         }
     }
     // Sends the response message
-    callSendAPI(sender_psid, response);
+    await callSendAPI(sender_psid, response);
+    if (second_message)
+        await callSendMessage(request_body);
 }
 
 
